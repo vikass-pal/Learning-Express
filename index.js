@@ -5,7 +5,7 @@ let port = 3000;
 
 app.listen(port, () => {
     console.log(`app listening on port ${port}`);
-})
+});
 
 // app.use((req,res) => {
 //     console.log("Req received");
@@ -29,11 +29,31 @@ app.get("/search",(req, res) => {
     res.send("<h1>search Page</h1>");
 });
 
-app.get("*", (req,res) => {
+app.get("/:username",(req, res) => {
+     let {username, id} = req.params;
+    let htmlStr = `<h1>Welcome to page of ${username} </h1>`
     console.log("Req received at wildcard");
-    res.send("<h1>404 Page Not Found</h1>");
+    res.send(htmlStr);
+    console.log(req.params);
+    res.send(`<h1>Hello, ${req.params.username}!</h1>`);
 });
 
 app.post("/", (req,res) => {
     res.send("you sent a Post req");
 });
+
+// Move wildcard route to the end
+app.get("*",(req,res) => {
+    
+    let htmlStr = `<h1>Welcome to page of ${username} </h1>`
+    console.log("Req received at wildcard");
+    res.send("404 Not Found");
+});
+
+app.get("/search", (req, res) => {
+    let {q} = req.query;
+    if(!q) {
+        return res.status(400).send("Bad Request: Missing query parameter 'q'");
+    }
+    res.send(`<h1>Search results for: ${q}</h1>`);
+})
