@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express(); 
-
 let port = 3000;
-
 app.listen(port, () => {
     console.log(`app listening on port ${port}`);
 });
@@ -49,7 +47,6 @@ app.get("*",(req,res) => {
     console.log("Req received at wildcard");
     res.send("404 Not Found");
 });
-
 app.get("/search", (req, res) => {
     let {q} = req.query;
     if(!q) {
