@@ -12,7 +12,6 @@ app.listen(port, () => {
 //         code
 //     );
 // });
-
 app.get("/", (req,res) => {
     res.send("Req received at root");
 });
