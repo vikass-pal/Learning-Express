@@ -2,7 +2,10 @@ const express = require('express');
 const app = express();
 const port = 8080;
 const path = require("path");
+const{ v4: uuidv4 } = require('uuid');
+
 app.use(express.urlencoded({extended:true}));
+
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -13,17 +16,17 @@ app.get("/", (req,res) => {
 });
 let posts = [
     {
-        id: "vikas",
+        id: uuidv4(),
         title: "Post 1",
         content: "This is the content of post 1"
     },
     {
-        id: "john",
+        id: uuidv4(),
         title: "Post 2",
         content: "This is the content of post 2"
     },
     {
-        id: "alice",
+        id: uuidv4(),
         title: "Post 3",
         content: "This is the content of post 3"
     }
@@ -36,14 +39,18 @@ app.get("/posts/new",(req,res) => {
 })
 app.post("/posts", (req,res)  => {
     let {title, content} = req.body;
+    let id = uuidv4();
     posts.push({title,content});
     res.redirect("/posts");
 });
 app.get("/posts/:id",(req,res) => {
     let {id} = req.params;
-   let post = posts.find((p) => id === p.id);
-   console.log(post);
-    res.send("You have requested for post with id: ");
+    let post = posts.find((p) => id === p.id);
+    if(post) {
+        res.render("show.ejs", { post });
+    } else {
+        res.status(404).send("Post not found");
+    }
 });
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
