@@ -1,8 +1,13 @@
-const express = require('express');
+import express from 'express';
 const app = express();
 const port = 8080;
-const path = require("path");
-const{ v4: uuidv4 } = require('uuid');
+import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.use(express.urlencoded({extended:true}));
 
@@ -39,18 +44,37 @@ app.get("/posts/new",(req,res) => {
 app.post("/posts", (req,res)  => {
     let {title, content} = req.body;
     let id = uuidv4();
-    posts.push({title,content});
+    posts.push({id, title, content});
     res.redirect("/posts");
 });
 app.get("/posts/:id",(req,res) => {
     let {id} = req.params;
-    let post = posts.find((p) => id === p.id);
+     post = posts.find((p) => id === p.id);
     if(post) {
         res.render("show.ejs", { post });
     } else {
         res.status(404).send("Post not found");
     }
 });
+
+app.patch("/posts/:id",(req,res) => {
+    let {id} = req.params;
+    let newContent = req.body.content;
+    let post = posts.find((p) => id === p.id);
+    post.content = newContent;
+    console.log(post);
+    res.send("patch is workin");
+})
+app.get("/posts/:id/edit", (req,res) => {
+    let {id} = req.params;
+    let post = posts.find((p) => id === p.id);
+    res.render("edit.ejs", { post });
+});
+app.delete("/posts/:id",(req,res) => {
+    let {id} = req.params;
+    posts = posts.filter((p) => p.id !== id);
+    res.redirect("/posts");
+})
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
